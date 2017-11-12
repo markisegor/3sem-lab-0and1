@@ -1,0 +1,501 @@
+#include <iostream>
+using namespace std;
+#define MAXSTACK 1024
+template <typename TE> class T//�������
+{
+public:
+	T(TE a)
+	{
+		info = a;
+		next = NULL;
+	}
+	TE info;
+	T* next;
+};
+template <typename TT> class SQ //������������������
+{
+public:
+	SQ()
+	{
+		len = 1;
+		FirstElement = NULL;
+	}
+	int getlen()
+	{
+		return len;
+	}
+	void showElem()
+	{
+		int i = 0;
+		for (T<TT> *temp = FirstElement; temp; temp = temp->next)
+		{
+			++i;
+			cout << i << ": " << temp->info << endl;
+		}
+
+	}
+	void AddELem(T<TT>* a, int index)
+	{
+		int k = 0;
+		T<TT>* temp = FirstElement;
+		if (index == 1)
+		{
+			a->next = FirstElement;
+			FirstElement = a;
+			len++;
+		}
+		else
+		{
+			for (int j = 1; j<index - 1; j++)
+				temp = temp->next;
+			a->next = temp->next;
+			temp->next = a;
+			len++;
+		}
+	}
+	void GetElem(int index)
+	{
+		if (!check (index))
+		{
+		T<TT>*temp = FirstElement;
+		for (int i = 1; i<index; ++i)
+			temp = temp->next;
+		cout << index << ": " << temp->info << endl;
+		}
+		else cout<<"������!"<< endl;
+	}
+	void GetLast()
+	{
+			int lenl;
+			lenl = this->getlen()-1;
+			this->GetElem(lenl);
+		}
+	void GetFirst()
+	{
+			this->GetElem(1);
+	}
+	void Prepend()
+	{
+		T<TT>* Elem;
+		TT elem;
+		cout << "������� �������   ";
+		cin >> elem;
+		Elem = new T<TT>(elem);
+		this->AddELem(Elem, 1);
+	}
+	void Append()
+	{
+		T<TT>* Elem;
+		TT elem;
+		cout << "������� ������� ";
+		cin>> elem;
+		Elem = new T<TT>(elem);
+		this->AddELem(Elem, len);
+	}
+	bool check(int lenp)
+	{
+		if (lenp>len)
+			return true;
+		else if (lenp <= 0)
+			return true;
+		else
+			return false;
+	}
+	void GetSubsequence()
+	{
+		int i;
+		int j;
+		do
+		{
+			cout << "������� ������ ������� �������� ���������������������" << endl;
+			cin >> i;
+			cout << "������� ������ ���������� �������� ���������������������" << endl;
+			cin >> j;
+		} while (j<i);
+		int k;
+		for (k = i; k<j + 1; k++)
+		{
+			GetElem(k);
+		}
+	}
+	void Delete()
+		{
+			int len = this->getlen();
+			int index;
+			do
+			{
+				cout << "������� ������ ���������� ��������" << endl;
+				cin >> index;
+			}
+			while (index>len);
+			T<TT>*temp = FirstElement;
+			for(int i=1; i<(index-1); i++)
+				temp = temp->next;
+			if (temp==FirstElement)
+			{
+				FirstElement=temp->next;
+				delete (temp);
+			}
+			else
+			{
+				T<TT>*temp2 = temp->next;
+				temp->next = temp2->next;
+				delete (temp2);
+			}
+
+	}
+	void *sort_poraz(){
+    int t=0;
+    T<TT> *l=this->FirstElement;
+    for (T<TT>*a=l;a;a=a->next)
+    {
+        int elem=a->info;
+        int m=0;
+        while (elem)
+        {
+            elem/=10;
+            m++;
+        }
+        if (m>t)
+            t=m;
+    }
+  int i, j, d, m=1;
+  T<TT>*temp, *out, *head[10], *tail[10];
+  out=l;
+
+  for (j=1; j<=t; j++) {
+    for (i=0; i<=9; i++)
+      head[i] = (tail[i]=NULL);
+
+    while ( l != NULL ) {
+      d = ((int)(l->info/m))%(int)10;
+      temp = tail[d];
+      if ( head[d]==NULL ) head[d] = l;
+      else temp->next = l;
+      temp = tail[d] = l;
+      l = l->next;
+      temp->next = NULL;
+    }
+    for (i=0; i<=9; i++)
+      if ( head[i] != NULL ) break;
+    l = head[i];
+    temp = tail[i];
+    for (d=i+1; d<=9; d++) {
+      if ( head[d] != NULL) {
+        temp->next = head[d];
+        temp = tail[d];
+      }
+    }
+    m*=10;
+  }
+    this->FirstElement=out;
+}
+    void sort_vstavka(){
+        T<TT> *root=this->FirstElement;
+        T<TT> *p, *key;
+        T<TT> *result = root;
+        root = root->next;      /* ������� ���� ��������� ������� */
+        result->next = NULL;    /* ������ ������� ���������������� ������ */
+
+        while(root->next != NULL){
+            key = root;
+            root = root->next;
+            if(key->info < result->info){   /* ��������� ��������� � ������ */
+                key->next = result;
+                result = key;
+            }else{
+                p = result;
+                while(p->next != NULL){     /* ����� �� ��� ��������������� ���������� */
+                    if(p->next->info > key->info)
+                        break;
+                    p = p->next;
+                }
+                key->next = p->next;
+                p->next = key;
+            }
+        }
+        this->FirstElement=result;
+    }
+    void qSortI() {
+        int  s=this->len-1;
+        T<TT>*b=this->FirstElement;
+        TT*a=new TT[s];
+        for(int i=0;b;b=b->next,++i)
+         a[i]=b->info;
+        int i, j; // ���������, ����������� � ����������
+        int lb, ub; // ������� ������������ � ����� ���������
+
+        int lbstack[MAXSTACK], ubstack[MAXSTACK]; // ���� ��������
+        // ������ ������ �������� ����� ��������,
+        // � ������: �����(lbstack) � ������(ubstack)
+        // ��������� ����������
+        int stackpos = 1; // ������� ������� �����
+        int ppos; // �������� �������
+        TT pivot; // ������� �������
+        TT temp;
+
+        lbstack[1] = 0;
+        ubstack[1] = s-1;
+
+        do {
+            // ����� ������� lb � ub �������� ������� �� �����.
+            lb = lbstack[ stackpos ];
+            ub = ubstack[ stackpos ];
+            stackpos--;
+
+            do {
+                // ��� 1. ���������� �� �������� pivot
+                ppos = ( lb + ub ) >> 1;
+                i = lb; j = ub; pivot = a[ppos];
+                do {
+                    while ( a[i] < pivot ) i++;
+                    while ( pivot < a[j] ) j--;
+                    if ( i <= j ) {
+                        temp = a[i]; a[i] = a[j]; a[j] = temp;
+                        i++; j--;
+                    }
+                } while ( i <= j );
+
+                // ������ ��������� i ��������� �� ������ ������� ����������,
+                // j - �� ����� ������ (��. ����������� ����), lb ? j ? i ? ub.
+                // �������� ������, ����� ��������� i ��� j ������� �� ������� �������
+
+                // ���� 2, 3. ���������� ������� ����� � ���� � ������� lb,ub
+                if ( i < ppos ) { // ������ ����� ������
+                    if ( i < ub ) { // ���� � ��� ������ 1 �������� - �����
+                        stackpos++; // �����������, ������ � ����
+                        lbstack[ stackpos ] = i;
+                        ubstack[ stackpos ] = ub;
+                    }
+                ub = j; // ��������� �������� ����������
+                // ����� �������� � ����� ������
+                } else { // ����� ����� ������
+                    if ( j > lb ) {
+                        stackpos++;
+                        lbstack[ stackpos ] = lb;
+                        ubstack[ stackpos ] = j;
+                    }
+                    lb = i;
+                }
+            } while ( lb < ub ); // ���� � ������� ����� ����� 1 ��������
+        } while ( stackpos != 0 ); // ���� ���� ������� � �����
+
+        b=this->FirstElement;
+        for(int i=0;b;b=b->next,++i)
+         b->info=a[i];
+         delete[]a;
+
+    }
+private:
+	int len;
+	bool isEmpty(T<TT> a) { return true; }
+	T<TT>* FirstElement;
+};
+template <class M>
+void abc(SQ<M>& a)
+{
+	T<M>* Elem;
+	int index;
+	M elem;
+	int bad;
+	int len = a.getlen();
+	cout << "������ � ������  " << len-1 << "  ���������" << endl;
+	do
+	{
+		cout << "������� ������ ��������   ";
+		cin >> index;
+		if (a.check(index))
+		{
+			bad = 1;
+			cout << "������! ������ ������ ������� � ����� ��������\n";
+		}
+		else (bad = 0);
+	} while (bad != 0);
+	cout << "������� �������   ";
+	cin >> elem;
+	Elem = new T<M>(elem);
+	a.AddELem(Elem, index);
+}
+int printNum()
+{
+	int choose;
+	cout << "��� ��� ������, ������?" << endl;
+	cout << "������� 1 ��� ���������� �������� �� ��������� �������" << endl;
+	cout << "������� 2 ��� ���������� �������� �� ������ �������" << endl;
+	cout << "������� 3 ��� ���������� �������� �� ��������� �������" << endl;
+	cout << "������� 4 ��� ������ ������������������" << endl;
+	cout << "������� 5 ��� ������ ������� ��������" << endl;
+	cout << "������� 6 ��� ������ �������� �� ��������� �������" << endl;
+	cout << "������� 7 ��� ������ ���������� ��������" << endl;
+	cout << "������� 8 ��� ��������� ���������������������" << endl;
+	cout << "������� 9 ��� �������� ���������� ��������" << endl;
+	cout << "������� 10 ��� ����������� ���������� " << endl;
+    cout << "������� 11 ��� ������� ���������� " << endl;
+    cout << "������� 12 ��� ���������� ���������\n" << endl;
+	cout << "������� 0 ��� ������" << endl;
+	cin >> choose;
+	return choose;
+}
+int main()
+{
+//	system("color 71");
+	setlocale(LC_ALL, "Russian");
+	int choose;
+	int t;
+	cout << "������� ��� ������:\n1.Integer\n2.Double\n3.Char" << endl;
+	cin >> t;
+	if (t == 1)
+	{
+		SQ<int> S;
+		do
+		{
+			choose = printNum();
+			switch (choose)
+			{
+			case 1:
+				abc(S);
+				break;
+			case 2:
+				S.Prepend();
+				break;
+			case 3:
+				S.Append();
+				break;
+			case 4:
+				S.showElem();
+				break;
+			case 5:
+				S.GetFirst();
+				break;
+			case 6:
+				int k;
+				cout << "������� ������ ";
+				cin >> k;
+				S.GetElem(k);
+				break;
+			case 7:
+				S.GetLast();
+				break;
+			case 8:
+				S.GetSubsequence();
+				break;
+			case 9:
+				S.Delete();
+				break;
+            case 10:
+				S.sort_poraz();
+				break;
+            case 11:
+                S.qSortI();
+                break;
+            case 12:
+                S.sort_vstavka();
+                break;
+			}
+		} while (choose != 0);
+	}
+	else if (t == 2)
+	{
+		SQ<double> S;
+		do
+		{
+			choose = printNum();
+			switch (choose)
+			{
+			case 1:
+				abc(S);
+				break;
+			case 2:
+				S.Prepend();
+				break;
+			case 3:
+				S.Append();
+				break;
+			case 4:
+				S.showElem();
+				break;
+			case 5:
+				S.GetFirst();
+				break;
+			case 6:
+				int k;
+				cout << "������� ������ ";
+				cin >> k;
+				S.GetElem(k);
+				break;
+			case 7:
+				S.GetLast();
+				break;
+			case 8:
+				S.GetSubsequence();
+				break;
+			case 9:
+				S.Delete();
+				break;
+            case 10:
+				S.sort_poraz();
+				break;
+            case 11:
+                S.qSortI();
+                break;
+            case 12:
+                S.sort_vstavka();
+                break;
+
+			}
+		}
+		 while (choose != 0);
+	}
+	else
+	{
+		SQ<char> S;
+		do
+		{
+			choose = printNum();
+			switch (choose)
+			{
+			case 1:
+				abc(S);
+				break;
+			case 2:
+				S.Prepend();
+				break;
+			case 3:
+				S.Append();
+				break;
+			case 4:
+				S.showElem();
+				break;
+			case 5:
+				S.GetFirst();
+				break;
+			case 6:
+				int k;
+				cout << "������� ������ ";
+				cin >> k;
+				S.GetElem(k);
+				break;
+			case 7:
+				S.GetLast();
+				break;
+			case 8:
+				S.GetSubsequence();
+				break;
+			case 9:
+				S.Delete();
+				break;
+            case 10:
+				S.sort_poraz();
+				break;
+            case 11:
+                S.qSortI();
+                break;
+            case 12:
+                S.sort_vstavka();
+                break;
+			}
+		} while (choose != 0);
+	}
+	cout << "�������� ���, ������!";
+	return 0;
+}
